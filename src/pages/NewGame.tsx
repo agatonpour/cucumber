@@ -138,8 +138,8 @@ export default function NewGame() {
         description: `${finalGameName} is ready to play!`
       });
       
-      // Navigate to game lobby (placeholder for now)
-      navigate("/");
+      // Navigate to game lobby
+      navigate(`/game/${newGame.id}`);
     } catch (error) {
       toast({
         title: "Error",

@@ -27,11 +27,7 @@ export default function Home() {
   };
 
   const handleResumeGame = (gameId: string) => {
-    toast({
-      title: "Game Loading",
-      description: "Resume functionality coming soon!",
-    });
-    console.log("Resume game:", gameId);
+    navigate(`/game/${gameId}`);
   };
 
   const handleDeleteGame = (gameId: string) => {
