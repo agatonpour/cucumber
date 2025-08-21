@@ -6,12 +6,14 @@ import { getSavedGames, deleteGame, SavedGame } from "@/lib/gameStorage";
 import { Plus, Settings, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import cucumberLogo from "@/assets/cucumber-logo.png";
 
 export default function Home() {
   const [games, setGames] = useState<SavedGame[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadGames();
@@ -50,11 +52,7 @@ export default function Home() {
   };
 
   const handleNewGame = () => {
-    toast({
-      title: "New Game",
-      description: "Game setup coming soon!",
-    });
-    console.log("Start new game");
+    navigate("/new-game");
   };
 
   const filteredGames = games.filter(game => 
@@ -74,24 +72,17 @@ export default function Home() {
               <img 
                 src={cucumberLogo} 
                 alt="Cucumber" 
-                className="h-10 w-10"
+                className="h-10 w-10 rounded-lg"
               />
               <div>
                 <h1 className="text-2xl font-bold gold-accent">Cucumber</h1>
-                <p className="text-sm text-muted-foreground">Elegant Scorekeeper</p>
+                <p className="text-sm text-muted-foreground">Scorekeeper</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4" />
-              </Button>
-              <Button 
-                className="elegant-glow"
-                onClick={handleNewGame}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Game
               </Button>
             </div>
           </div>

@@ -26,7 +26,7 @@
     --primary: var(--gold);
     --primary-foreground: var(--rich-black);
 
-    --secondary: 156 35% 25%;         /* Muted green */
+    --secondary: 50 60% 35%;          /* Darker gold */
     --secondary-foreground: var(--cream);
 
     --muted: 156 25% 22%;
