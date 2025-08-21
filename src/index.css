@@ -2,41 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Cucumber App Design System - Elegant Casino-Inspired Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core brand colors */
+    --felt-green: 156 75% 13%;        /* #0B3B2E - Main background */
+    --gold: 50 74% 46%;               /* #C9A227 - Primary accent */
+    --deep-red: 0 62% 30%;            /* #7A1E1E - Secondary accent */
+    --rich-black: 0 0% 7%;            /* #111 - Text and details */
+    --cream: 45 100% 96%;             /* #FEFDF8 - Light text */
+    
+    /* Semantic color mapping */
+    --background: var(--felt-green);
+    --foreground: var(--cream);
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 156 45% 18%;              /* Lighter felt for cards */
+    --card-foreground: var(--cream);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 156 45% 18%;
+    --popover-foreground: var(--cream);
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: var(--gold);
+    --primary-foreground: var(--rich-black);
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 156 35% 25%;         /* Muted green */
+    --secondary-foreground: var(--cream);
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 156 25% 22%;
+    --muted-foreground: 45 20% 75%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: var(--deep-red);
+    --accent-foreground: var(--cream);
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: var(--deep-red);
+    --destructive-foreground: var(--cream);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 156 25% 30%;
+    --input: 156 25% 22%;
+    --ring: var(--gold);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    
+    /* Custom design tokens */
+    --gradient-felt: linear-gradient(135deg, hsl(var(--felt-green)), hsl(156 65% 15%));
+    --gradient-gold: linear-gradient(135deg, hsl(var(--gold)), hsl(50 85% 55%));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(156 35% 20%));
+    
+    --shadow-elegant: 0 8px 32px -8px hsl(var(--rich-black) / 0.4);
+    --shadow-glow: 0 0 24px hsl(var(--gold) / 0.3);
+    --shadow-inner: inset 0 2px 4px hsl(var(--rich-black) / 0.2);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -91,7 +108,8 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+}
+
 }
 
 @layer base {
@@ -100,6 +118,36 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-felt);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Casino-style card components */
+  .felt-card {
+    @apply bg-gradient-to-br from-card to-card/90 rounded-2xl border border-border/50;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-elegant), var(--shadow-inner);
+    transition: var(--transition-smooth);
+  }
+  
+  .felt-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elegant), var(--shadow-glow), var(--shadow-inner);
+  }
+  
+  .gold-accent {
+    @apply text-primary font-semibold;
+    text-shadow: 0 1px 2px hsl(var(--rich-black) / 0.3);
+  }
+  
+  .elegant-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .casino-gradient {
+    background: var(--gradient-felt);
   }
 }
