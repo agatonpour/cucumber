@@ -176,7 +176,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="gold-accent">
-            Round {game.currentRound} Results
+            Round {game.currentRound} Result
           </DialogTitle>
         </DialogHeader>
 
@@ -203,9 +203,9 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Trophy className="h-5 w-5 text-gold" />
-              <Label className="text-base font-medium gold-accent">Winners</Label>
+              <Label className="text-base font-medium gold-accent">Winner</Label>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-2">
               {activePlayers.map(player => (
                 <div key={player.id} className="flex items-center space-x-2">
                   <Checkbox
@@ -226,31 +226,29 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Target className="h-5 w-5 text-destructive" />
-              <Label className="text-base font-medium gold-accent">Losers & Exit Values</Label>
+              <Label className="text-base font-medium gold-accent">Loser & Exit Values</Label>
             </div>
             <div className="space-y-2">
               {activePlayers.map(player => (
-                <div key={player.id} className="flex items-center gap-3 p-2 rounded felt-card">
+                <div key={player.id} className="flex items-center gap-2 p-2 rounded felt-card">
                   <Checkbox
                     id={`loser-${player.id}`}
                     checked={selectedLosers.has(player.id)}
                     onCheckedChange={() => toggleLoser(player.id)}
                     disabled={selectedWinners.has(player.id)}
                   />
-                  <Label htmlFor={`loser-${player.id}`} className="flex-1 cursor-pointer">
+                  <Label htmlFor={`loser-${player.id}`} className="cursor-pointer">
                     {player.name}
                   </Label>
                   {selectedLosers.has(player.id) && (
-                    <div className="w-20">
-                      <Input
-                        type="number"
-                        min="1"
-                        placeholder="Exit"
-                        value={exitValues[player.id] || ''}
-                        onChange={(e) => setExitValue(player.id, parseInt(e.target.value) || 0)}
-                        className="text-center"
-                      />
-                    </div>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="Exit"
+                      value={exitValues[player.id] || ''}
+                      onChange={(e) => setExitValue(player.id, parseInt(e.target.value) || 0)}
+                      className="w-16 text-center ml-2"
+                    />
                   )}
                 </div>
               ))}

@@ -122,11 +122,12 @@ export default function NewGame() {
     });
 
     // Set multiplier settings
+    newGame.settings.gameMode = gameMode;
     if (multiplierMode === "simple") {
       newGame.settings.multiplier = simpleMultiplier;
-      newGame.settings.mode = `${gameMode}_simple`;
+      newGame.settings.mode = 'simple';
     } else {
-      newGame.settings.mode = `${gameMode}_advanced`;
+      newGame.settings.mode = 'advanced';
       newGame.settings.multiplierSequence = getSequencePreview();
     }
 

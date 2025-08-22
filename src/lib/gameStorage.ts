@@ -10,7 +10,8 @@ export interface Player {
 }
 
 export interface GameSettings {
-  mode: string;
+  gameMode: 'social' | 'arena';
+  mode: 'simple' | 'advanced';
   multiplier: number;
   multiplierSequence?: number[];
 }
@@ -145,7 +146,8 @@ export const createNewGame = (name: string, players: string[]): SavedGame => {
     lastPlayed: now,
     currentRound: 1,
     settings: {
-      mode: 'standard',
+      gameMode: 'social',
+      mode: 'simple',
       multiplier: 1
     },
     players: players.map((playerName, index) => ({

@@ -14,12 +14,15 @@ import {
   History, 
   ChevronDown,
   UserCheck,
-  UserX
+  UserX,
+  Settings
 } from "lucide-react";
 import { getGameById, saveGame, updateLastPlayed, SavedGame, Player } from "@/lib/gameStorage";
 import { useToast } from "@/hooks/use-toast";
 import cucumberLogo from "@/assets/cucumber-logo.png";
 import RoundResultModal, { RoundResult } from "@/components/RoundResultModal";
+import PlayerNameDialog from "@/components/PlayerNameDialog";
+import MultiplierSettings from "@/components/MultiplierSettings";
 
 export default function GameLobby() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -28,6 +31,8 @@ export default function GameLobby() {
   const [game, setGame] = useState<SavedGame | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [roundModalOpen, setRoundModalOpen] = useState(false);
+  const [playerNameDialogOpen, setPlayerNameDialogOpen] = useState(false);
+  const [multiplierSettingsOpen, setMultiplierSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (!gameId) {
@@ -52,9 +57,6 @@ export default function GameLobby() {
 
   const activePlayers = game?.players.filter(p => p.active) || [];
   const inactivePlayers = game?.players.filter(p => !p.active) || [];
-  const topPlayer = activePlayers.reduce((top, player) => 
-    player.tally > (top?.tally || 0) ? player : top
-  , activePlayers[0]);
 
   const togglePlayerActive = (playerId: string) => {
     if (!game) return;
@@ -88,13 +90,12 @@ export default function GameLobby() {
     saveGame(updated);
   };
 
-  const addPlayer = () => {
+  const addPlayer = (name: string) => {
     if (!game) return;
 
-    const playerCount = game.players.length + 1;
     const newPlayer: Player = {
-      id: `player_${playerCount}_${Date.now()}`,
-      name: `Player ${playerCount}`,
+      id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name,
       tally: 0,
       active: false
     };
@@ -111,6 +112,29 @@ export default function GameLobby() {
 
   const startNextRound = () => {
     setRoundModalOpen(true);
+  };
+
+  const handleMultiplierSettings = (settings: {
+    mode: 'simple' | 'advanced';
+    multiplier: number;
+    multiplierSequence?: number[];
+  }) => {
+    if (!game) return;
+
+    const updated = {
+      ...game,
+      settings: {
+        ...game.settings,
+        ...settings
+      }
+    };
+    setGame(updated);
+    saveGame(updated);
+    
+    toast({
+      title: "Settings Updated",
+      description: "Multiplier settings have been saved."
+    });
   };
 
   const handleRoundResult = (result: RoundResult) => {
@@ -213,12 +237,11 @@ export default function GameLobby() {
             </div>
             
             <Button 
-              className="elegant-glow"
-              onClick={startNextRound}
-              disabled={activePlayers.length < 3}
+              variant="outline"
+              onClick={() => setMultiplierSettingsOpen(true)}
             >
-              <Play className="h-4 w-4 mr-2" />
-              Start Next Round
+              <Settings className="h-4 w-4 mr-2" />
+              Multiplier
             </Button>
           </div>
         </div>
@@ -250,25 +273,29 @@ export default function GameLobby() {
                     <Card className="felt-card p-4 text-center min-w-[120px] bg-card/90 backdrop-blur-sm">
                       <div className="space-y-2">
                         <div className="flex items-center justify-center gap-1">
-                          {player.id === topPlayer?.id && (
-                            <Crown className="h-4 w-4 text-gold" />
-                          )}
                           <span className="font-medium text-sm">{player.name}</span>
                         </div>
                         <div className="text-2xl font-bold gold-accent">
                           {player.tally}
                         </div>
-                        <div className="flex justify-center gap-1">
-                          {player.id === topPlayer?.id && (
-                            <Badge variant="default" className="text-xs bg-gold text-rich-black">
-                              Maestro
-                            </Badge>
-                          )}
-                        </div>
                       </div>
                     </Card>
                   </div>
                 ))}
+                
+                {/* Start Next Round Button in Center */}
+                {activePlayers.length >= 3 && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <Button 
+                      className="elegant-glow pointer-events-auto"
+                      onClick={startNextRound}
+                      size="lg"
+                    >
+                      <Play className="h-5 w-5 mr-2" />
+                      Start Next Round
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -276,6 +303,37 @@ export default function GameLobby() {
 
         {/* Sidebar */}
         <div className="w-80 border-l border-border/20 bg-card/10 backdrop-blur-sm p-6 space-y-6 overflow-y-auto">
+          {/* Active Players Management */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium gold-accent">Active Players</h3>
+            <div className="space-y-2">
+              {activePlayers.map((player) => (
+                <Card key={player.id} className="felt-card p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="font-medium">{player.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        Tokens: {player.tally}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => togglePlayerActive(player.id)}
+                        disabled={activePlayers.length <= 3}
+                      >
+                        <UserX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Inactive Players */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -283,7 +341,7 @@ export default function GameLobby() {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={addPlayer}
+                onClick={() => setPlayerNameDialogOpen(true)}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Player
@@ -323,40 +381,6 @@ export default function GameLobby() {
                 <p className="text-sm">No players sitting out</p>
               </div>
             )}
-          </div>
-
-          <Separator />
-
-          {/* Active Players Management */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium gold-accent">Active Players</h3>
-            <div className="space-y-2">
-              {activePlayers.map((player) => (
-                <Card key={player.id} className="felt-card p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="font-medium">{player.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Tokens: {player.tally}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {player.id === topPlayer?.id && (
-                        <Crown className="h-4 w-4 text-gold" />
-                      )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => togglePlayerActive(player.id)}
-                        disabled={activePlayers.length <= 3}
-                      >
-                        <UserX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
           </div>
 
           <Separator />
@@ -406,6 +430,23 @@ export default function GameLobby() {
           open={roundModalOpen}
           onOpenChange={setRoundModalOpen}
           onSubmit={handleRoundResult}
+        />
+      )}
+
+      {/* Player Name Dialog */}
+      <PlayerNameDialog
+        open={playerNameDialogOpen}
+        onOpenChange={setPlayerNameDialogOpen}
+        onConfirm={addPlayer}
+      />
+
+      {/* Multiplier Settings Dialog */}
+      {game && (
+        <MultiplierSettings
+          open={multiplierSettingsOpen}
+          onOpenChange={setMultiplierSettingsOpen}
+          currentSettings={game.settings}
+          onSave={handleMultiplierSettings}
         />
       )}
     </div>
