@@ -18,8 +18,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/new-game" element={<NewGame />} />
-          <Route path="/game/:gameId" element={<GameLobby />} />
+          <Route path="/new" element={<NewGame />} />
+          <Route path="/lobby/:gameId" element={<GameLobby />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

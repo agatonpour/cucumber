@@ -127,8 +127,7 @@ export default function NewGame() {
       newGame.settings.mode = `${gameMode}_simple`;
     } else {
       newGame.settings.mode = `${gameMode}_advanced`;
-      // Store sequence in a custom field
-      (newGame.settings as any).sequence = getSequencePreview();
+      newGame.settings.multiplierSequence = getSequencePreview();
     }
 
     try {
@@ -139,7 +138,7 @@ export default function NewGame() {
       });
       
       // Navigate to game lobby
-      navigate(`/game/${newGame.id}`);
+      navigate(`/lobby/${newGame.id}`);
     } catch (error) {
       toast({
         title: "Error",

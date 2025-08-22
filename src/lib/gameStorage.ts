@@ -12,12 +12,17 @@ export interface Player {
 export interface GameSettings {
   mode: string;
   multiplier: number;
+  multiplierSequence?: number[];
 }
 
 export interface RoundRecord {
   round: number;
   timestamp: Date;
-  playerScores: Record<string, number>;
+  winners?: string[];
+  losers?: string[];
+  multiplier?: number;
+  adjustments?: { playerId: string; change: number }[];
+  playerScores?: Record<string, number>;
   notes?: string;
 }
 

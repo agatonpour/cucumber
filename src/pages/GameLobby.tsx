@@ -19,6 +19,7 @@ import {
 import { getGameById, saveGame, updateLastPlayed, SavedGame, Player } from "@/lib/gameStorage";
 import { useToast } from "@/hooks/use-toast";
 import cucumberLogo from "@/assets/cucumber-logo.png";
+import RoundResultModal, { RoundResult } from "@/components/RoundResultModal";
 
 export default function GameLobby() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -26,6 +27,7 @@ export default function GameLobby() {
   const { toast } = useToast();
   const [game, setGame] = useState<SavedGame | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [roundModalOpen, setRoundModalOpen] = useState(false);
 
   useEffect(() => {
     if (!gameId) {
@@ -108,9 +110,56 @@ export default function GameLobby() {
   };
 
   const startNextRound = () => {
+    setRoundModalOpen(true);
+  };
+
+  const handleRoundResult = (result: RoundResult) => {
+    if (!game) return;
+
+    // Apply token adjustments
+    const updatedPlayers = game.players.map(player => {
+      const adjustment = result.adjustments.find(adj => adj.playerId === player.id);
+      if (adjustment) {
+        return { ...player, tally: player.tally + adjustment.change };
+      }
+      return player;
+    });
+
+    // Create round record
+    const winnerNames = result.winners.map(id => 
+      game.players.find(p => p.id === id)?.name || 'Unknown'
+    );
+    const loserEntries = result.losers.map(loser => {
+      const player = game.players.find(p => p.id === loser.playerId);
+      return `${player?.name || 'Unknown'} (${loser.exitValue})`;
+    });
+
+    const roundRecord = {
+      round: game.currentRound,
+      timestamp: new Date(),
+      winners: result.winners,
+      losers: result.losers.map(l => l.playerId),
+      multiplier: result.multiplier,
+      adjustments: result.adjustments,
+      notes: `Winners: ${winnerNames.join(', ')} • Losers: ${loserEntries.join(', ')} • ×${result.multiplier}`
+    };
+
+    // Update game
+    const updatedGame = {
+      ...game,
+      players: updatedPlayers,
+      currentRound: game.currentRound + 1,
+      history: [...game.history, roundRecord],
+      lastPlayed: new Date()
+    };
+
+    setGame(updatedGame);
+    saveGame(updatedGame);
+    setRoundModalOpen(false);
+
     toast({
-      title: "Round Starting",
-      description: "Round Result modal coming soon!",
+      title: "Round Completed",
+      description: `Round ${game.currentRound} results applied successfully.`
     });
   };
 
@@ -349,6 +398,16 @@ export default function GameLobby() {
           </Collapsible>
         </div>
       </div>
+
+      {/* Round Result Modal */}
+      {game && (
+        <RoundResultModal
+          game={game}
+          open={roundModalOpen}
+          onOpenChange={setRoundModalOpen}
+          onSubmit={handleRoundResult}
+        />
+      )}
     </div>
   );
 }

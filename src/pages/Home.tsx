@@ -27,7 +27,7 @@ export default function Home() {
   };
 
   const handleResumeGame = (gameId: string) => {
-    navigate(`/game/${gameId}`);
+    navigate(`/lobby/${gameId}`);
   };
 
   const handleDeleteGame = (gameId: string) => {
@@ -48,10 +48,10 @@ export default function Home() {
   };
 
   const handleNewGame = () => {
-    navigate("/new-game");
+    navigate("/new");
   };
 
-  const filteredGames = games.filter(game => 
+  const filteredGames = games.filter(game =>
     game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     game.players.some(player => 
       player.name.toLowerCase().includes(searchTerm.toLowerCase())
