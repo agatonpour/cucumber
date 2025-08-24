@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,18 +8,31 @@ interface PlayerNameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (name: string) => void;
+  initialName?: string;
+  title?: string;
 }
 
-export default function PlayerNameDialog({ open, onOpenChange, onConfirm }: PlayerNameDialogProps) {
-  const [name, setName] = useState("");
+export default function PlayerNameDialog({ 
+  open, 
+  onOpenChange, 
+  onConfirm, 
+  initialName = "", 
+  title = "Add New Player" 
+}: PlayerNameDialogProps) {
+  const [name, setName] = useState(initialName);
 
   const handleSubmit = () => {
     if (name.trim()) {
       onConfirm(name.trim());
-      setName("");
+      setName(initialName);
       onOpenChange(false);
     }
   };
+
+  // Update name when initialName changes
+  useEffect(() => {
+    setName(initialName);
+  }, [initialName]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -31,7 +44,7 @@ export default function PlayerNameDialog({ open, onOpenChange, onConfirm }: Play
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="gold-accent">Add New Player</DialogTitle>
+          <DialogTitle className="gold-accent">{title}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -60,7 +73,7 @@ export default function PlayerNameDialog({ open, onOpenChange, onConfirm }: Play
             onClick={handleSubmit}
             disabled={!name.trim()}
           >
-            Add Player
+            {initialName ? "Rename" : "Add Player"}
           </Button>
         </DialogFooter>
       </DialogContent>

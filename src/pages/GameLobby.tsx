@@ -15,7 +15,9 @@ import {
   ChevronDown,
   UserCheck,
   UserX,
-  Settings
+  Settings,
+  Trash2,
+  Edit
 } from "lucide-react";
 import { getGameById, saveGame, updateLastPlayed, SavedGame, Player } from "@/lib/gameStorage";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +35,7 @@ export default function GameLobby() {
   const [roundModalOpen, setRoundModalOpen] = useState(false);
   const [playerNameDialogOpen, setPlayerNameDialogOpen] = useState(false);
   const [multiplierSettingsOpen, setMultiplierSettingsOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   useEffect(() => {
     if (!gameId) {
@@ -78,7 +81,8 @@ export default function GameLobby() {
       toast({
         title: "Maximum Active Players",
         description: "Only 4 players can be active for a round.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 4000
       });
       return;
     }
@@ -87,7 +91,8 @@ export default function GameLobby() {
       toast({
         title: "Minimum Active Players", 
         description: "At least 3 players must be active.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 4000
       });
       return;
     }
@@ -100,21 +105,60 @@ export default function GameLobby() {
   const addPlayer = (name: string) => {
     if (!game) return;
 
-    const newPlayer: Player = {
-      id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name,
-      tally: 0,
-      active: false
-    };
+    if (editingPlayer) {
+      // Rename existing player
+      const updated = { ...game };
+      const player = updated.players.find(p => p.id === editingPlayer.id);
+      if (player) {
+        player.name = name;
+        setGame(updated);
+        saveGame(updated);
+        
+        toast({
+          title: "Player Renamed",
+          description: `Player renamed to ${name}.`,
+          duration: 4000
+        });
+      }
+      setEditingPlayer(null);
+    } else {
+      // Add new player
+      const newPlayer: Player = {
+        id: `player_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name,
+        tally: 0,
+        active: false
+      };
 
-    const updated = { ...game, players: [...game.players, newPlayer] };
+      const updated = { ...game, players: [...game.players, newPlayer] };
+      setGame(updated);
+      saveGame(updated);
+      
+      toast({
+        title: "Player Added",
+        description: `${newPlayer.name} joined the game.`,
+        duration: 4000
+      });
+    }
+  };
+
+  const removePlayer = (playerId: string) => {
+    if (!game) return;
+
+    const updated = { ...game, players: game.players.filter(p => p.id !== playerId) };
     setGame(updated);
     saveGame(updated);
     
     toast({
-      title: "Player Added",
-      description: `${newPlayer.name} joined the game.`
+      title: "Player Removed",
+      description: "Player has been removed from the game.",
+      duration: 4000
     });
+  };
+
+  const editPlayer = (player: Player) => {
+    setEditingPlayer(player);
+    setPlayerNameDialogOpen(true);
   };
 
   const startNextRound = () => {
@@ -140,7 +184,8 @@ export default function GameLobby() {
     
     toast({
       title: "Settings Updated",
-      description: "Multiplier settings have been saved."
+      description: "Multiplier settings have been saved.",
+      duration: 4000
     });
   };
 
@@ -190,7 +235,8 @@ export default function GameLobby() {
 
     toast({
       title: "Round Completed",
-      description: `Round ${game.currentRound} results applied successfully.`
+      description: `Round ${game.currentRound} results applied successfully.`,
+      duration: 4000
     });
   };
 
@@ -259,14 +305,6 @@ export default function GameLobby() {
         <div className="flex-1 relative overflow-hidden">
           {/* Felt Table Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-felt-green to-felt-green/80">
-            {/* Cucumber Logo Watermark */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <img 
-                src={cucumberLogo}
-                alt="Cucumber Watermark"
-                className="w-64 h-64 opacity-10 select-none pointer-events-none"
-              />
-            </div>
             
             {/* Table Border */}
             <div className="absolute inset-8 rounded-full border-4 border-gold/30 shadow-inner">
@@ -333,6 +371,20 @@ export default function GameLobby() {
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => editPlayer(player)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removePlayer(player.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => togglePlayerActive(player.id)}
                         disabled={activePlayers.length <= 3}
                       >
@@ -376,6 +428,20 @@ export default function GameLobby() {
                         <Badge variant="secondary" className="bg-gold/20 text-gold">
                           Sitting Out
                         </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => editPlayer(player)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removePlayer(player.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
@@ -449,8 +515,13 @@ export default function GameLobby() {
       {/* Player Name Dialog */}
       <PlayerNameDialog
         open={playerNameDialogOpen}
-        onOpenChange={setPlayerNameDialogOpen}
+        onOpenChange={(open) => {
+          setPlayerNameDialogOpen(open);
+          if (!open) setEditingPlayer(null);
+        }}
         onConfirm={addPlayer}
+        initialName={editingPlayer?.name || ""}
+        title={editingPlayer ? "Rename Player" : "Add New Player"}
       />
 
       {/* Multiplier Settings Dialog */}

@@ -68,7 +68,7 @@ export default function Home() {
               <img 
                 src={cucumberLogo} 
                 alt="Cucumber" 
-                className="h-20 w-20 rounded-lg mb-4"
+                className="h-32 w-32 rounded-lg mb-4"
               />
               <h1 className="text-4xl font-bold gold-accent">Cucumber</h1>
             </div>
