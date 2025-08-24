@@ -62,33 +62,25 @@ export default function Home() {
     <div className="min-h-screen casino-gradient">
       {/* Header */}
       <header className="border-b border-border/20 bg-card/10 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <div className="flex flex-col items-center mb-6">
               <img 
                 src={cucumberLogo} 
                 alt="Cucumber" 
-                className="h-10 w-10 rounded-lg"
+                className="h-20 w-20 rounded-lg mb-4"
               />
-              <div>
-                <h1 className="text-2xl font-bold gold-accent">Cucumber</h1>
-                <p className="text-sm text-muted-foreground">Scorekeeper</p>
-              </div>
+              <h1 className="text-4xl font-bold gold-accent">Cucumber</h1>
             </div>
             
-            <div className="flex items-center gap-3">
-              <Button 
-                className="elegant-glow" 
-                size="sm"
-                onClick={handleNewGame}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Game
-              </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button 
+              className="elegant-glow" 
+              size="lg"
+              onClick={handleNewGame}
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              New Game
+            </Button>
           </div>
         </div>
       </header>

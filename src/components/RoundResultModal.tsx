@@ -175,8 +175,8 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="gold-accent">
-            Round {game.currentRound} Result
+          <DialogTitle className="gold-accent text-center">
+            {game.currentRound} Rounds Result
           </DialogTitle>
         </DialogHeader>
 
@@ -201,11 +201,11 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
 
           {/* Winner Selection */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center justify-center gap-2 mb-3">
               <Trophy className="h-5 w-5 text-gold" />
               <Label className="text-base font-medium gold-accent">Winner</Label>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 max-w-xs mx-auto">
               {activePlayers.map(player => (
                 <div key={player.id} className="flex items-center space-x-2">
                   <Checkbox
@@ -224,11 +224,11 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
 
           {/* Loser Selection */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center justify-center gap-2 mb-3">
               <Target className="h-5 w-5 text-destructive" />
               <Label className="text-base font-medium gold-accent">Loser & Exit Values</Label>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 max-w-xs mx-auto">
               {activePlayers.map(player => (
                 <div key={player.id} className="flex items-center gap-2 p-2 rounded felt-card">
                   <Checkbox
@@ -237,7 +237,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                     onCheckedChange={() => toggleLoser(player.id)}
                     disabled={selectedWinners.has(player.id)}
                   />
-                  <Label htmlFor={`loser-${player.id}`} className="cursor-pointer">
+                  <Label htmlFor={`loser-${player.id}`} className="cursor-pointer flex-1">
                     {player.name}
                   </Label>
                   {selectedLosers.has(player.id) && (
@@ -247,7 +247,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                       placeholder="Exit"
                       value={exitValues[player.id] || ''}
                       onChange={(e) => setExitValue(player.id, parseInt(e.target.value) || 0)}
-                      className="w-16 text-center ml-2"
+                      className="w-16 text-center"
                     />
                   )}
                 </div>
@@ -260,7 +260,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
             <>
               <Separator />
               <div>
-                <Label className="text-base font-medium gold-accent mb-3 block">Token Adjustments Preview</Label>
+                <Label className="text-base font-medium gold-accent mb-3 block text-center">Token Adjustments Preview</Label>
                 <div className="space-y-1">
                   {adjustments.map(adj => {
                     const player = activePlayers.find(p => p.id === adj.playerId);
@@ -283,7 +283,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
           )}
 
           {/* Submit Button */}
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex justify-center gap-3 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>

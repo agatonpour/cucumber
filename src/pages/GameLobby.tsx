@@ -231,7 +231,7 @@ export default function GameLobby() {
               <div>
                 <h1 className="text-2xl font-bold gold-accent">{game.name}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Round {game.currentRound} • {activePlayers.length} active players
+                  {game.currentRound} Rounds • {activePlayers.length} active players
                 </p>
               </div>
             </div>
@@ -287,12 +287,15 @@ export default function GameLobby() {
                 {activePlayers.length >= 3 && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Button 
-                      className="elegant-glow pointer-events-auto"
+                      className="elegant-glow pointer-events-auto rounded-full w-32 h-32"
                       onClick={startNextRound}
-                      size="lg"
                     >
-                      <Play className="h-5 w-5 mr-2" />
-                      Start Next Round
+                      <div className="text-center">
+                        <Play className="h-6 w-6 mx-auto mb-1" />
+                        <div className="text-sm leading-tight">
+                          Start Next<br />Round
+                        </div>
+                      </div>
                     </Button>
                   </div>
                 )}
@@ -401,12 +404,12 @@ export default function GameLobby() {
                 game.history.slice(-5).reverse().map((round, index) => (
                   <Card key={round.round} className="felt-card p-3">
                     <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Round {round.round}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(round.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
+                       <div className="flex justify-between items-center">
+                         <span className="font-medium">{round.round} Rounds</span>
+                         <span className="text-xs text-muted-foreground">
+                           {new Date(round.timestamp).toLocaleDateString()}
+                         </span>
+                       </div>
                       {round.notes && (
                         <p className="text-sm text-muted-foreground">{round.notes}</p>
                       )}

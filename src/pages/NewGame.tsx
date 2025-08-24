@@ -173,28 +173,29 @@ export default function NewGame() {
             <div className="space-y-8">
               {/* Game Name */}
               <div className="space-y-2">
-                <Label htmlFor="gameName" className="text-lg font-medium">Game Name</Label>
+                <Label htmlFor="gameName" className="text-lg font-medium text-center block">Game Name</Label>
                 <Input
                   id="gameName"
                   placeholder={generateGameName()}
                   value={gameName}
                   onChange={(e) => setGameName(e.target.value)}
-                  className="bg-card/50 border-border/50 focus:border-primary"
+                  className="bg-card/50 border-border/50 focus:border-primary max-w-sm mx-auto"
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-center">
                   Leave blank to use player names
                 </p>
               </div>
 
               {/* Players */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-lg font-medium">Players</Label>
+                <div className="text-center">
+                  <Label className="text-lg font-medium block mb-4">Players</Label>
                   <Button 
                     variant="outline" 
                     size="sm"
                     onClick={addPlayer}
                     disabled={players.length >= 8}
+                    className="mb-4"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Player
@@ -203,7 +204,7 @@ export default function NewGame() {
                 
                 <div className="space-y-3">
                   {players.map((player, index) => (
-                    <div key={index} className="flex items-center gap-3">
+                    <div key={index} className="flex items-center gap-3 max-w-md mx-auto">
                       <div className="flex-1">
                         <Input
                           placeholder={`Player ${index + 1}`}
@@ -243,7 +244,7 @@ export default function NewGame() {
 
               {/* Multiplier Setup */}
               <div className="space-y-4">
-                <Label className="text-lg font-medium">Token Multiplier</Label>
+                <Label className="text-lg font-medium text-center block">Token Multiplier</Label>
                 <Tabs value={multiplierMode} onValueChange={(v) => setMultiplierMode(v as "simple" | "advanced")}>
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="simple">Simple</TabsTrigger>
@@ -251,15 +252,17 @@ export default function NewGame() {
                   </TabsList>
                   
                   <TabsContent value="simple" className="space-y-3 mt-4">
-                    <Input
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={simpleMultiplier}
-                      onChange={(e) => setSimpleMultiplier(parseInt(e.target.value) || 1)}
-                      className="bg-card/50 border-border/50 focus:border-primary"
-                    />
-                    <p className="text-sm text-muted-foreground">
+                    <div className="flex items-center justify-center">
+                      <Input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={simpleMultiplier}
+                        onChange={(e) => setSimpleMultiplier(parseInt(e.target.value) || 1)}
+                        className="bg-card/50 border-border/50 focus:border-primary w-24 text-center"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground text-center">
                       Fixed multiplier for all rounds
                     </p>
                   </TabsContent>
@@ -269,13 +272,13 @@ export default function NewGame() {
                       placeholder="2,5,2,5"
                       value={advancedSequence}
                       onChange={(e) => setAdvancedSequence(e.target.value)}
-                      className="bg-card/50 border-border/50 focus:border-primary"
+                      className="bg-card/50 border-border/50 focus:border-primary max-w-sm mx-auto"
                     />
                     <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        Comma-separated sequence that cycles each round
+                      <p className="text-sm text-muted-foreground text-center">
+                        Sequence that cycles each round
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center gap-2">
                         <span className="text-sm text-muted-foreground">Preview:</span>
                         <div className="flex gap-1">
                           {getSequencePreview().slice(0, 6).map((val, i) => (
@@ -295,7 +298,7 @@ export default function NewGame() {
 
               {/* Game Mode */}
               <div className="space-y-4">
-                <Label className="text-lg font-medium">Game Mode</Label>
+                <Label className="text-lg font-medium text-center block">Game Mode</Label>
                 <Tabs value={gameMode} onValueChange={(v) => setGameMode(v as "social" | "arena")}>
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="social">Social</TabsTrigger>

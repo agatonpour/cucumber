@@ -35,7 +35,7 @@ export function GameCard({ game, onResume, onDelete }: GameCardProps) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-sm text-muted-foreground mb-1">Round {game.currentRound}</div>
+          <div className="text-sm text-muted-foreground mb-1">{game.currentRound} Rounds</div>
           {topPlayer && (
             <div className="flex items-center gap-1 gold-accent text-sm">
               <Trophy className="h-4 w-4" />
