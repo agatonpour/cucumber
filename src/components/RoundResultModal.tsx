@@ -176,7 +176,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="gold-accent text-center">
-            {game.currentRound} Rounds Result
+            Round {game.currentRound} Results
           </DialogTitle>
         </DialogHeader>
 
@@ -228,9 +228,13 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
               <Target className="h-5 w-5 text-destructive" />
               <Label className="text-base font-medium gold-accent">Loser & Exit Values</Label>
             </div>
-            <div className="space-y-2 max-w-xs mx-auto">
+            <div className="space-y-2 max-w-sm mx-auto">
               {activePlayers.map(player => (
-                <div key={player.id} className="flex items-center gap-2 p-2 rounded felt-card">
+                <div 
+                  key={player.id} 
+                  className="flex items-center gap-2 p-2 rounded felt-card cursor-pointer"
+                  onClick={() => toggleLoser(player.id)}
+                >
                   <Checkbox
                     id={`loser-${player.id}`}
                     checked={selectedLosers.has(player.id)}
@@ -242,12 +246,18 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                   </Label>
                   {selectedLosers.has(player.id) && (
                     <Input
+                      ref={(input) => {
+                        if (input && selectedLosers.has(player.id) && !exitValues[player.id]) {
+                          setTimeout(() => input.focus(), 0);
+                        }
+                      }}
                       type="number"
                       min="1"
                       placeholder="Exit"
                       value={exitValues[player.id] || ''}
                       onChange={(e) => setExitValue(player.id, parseInt(e.target.value) || 0)}
-                      className="w-16 text-center"
+                      className="w-20 text-center ml-2"
+                      onClick={(e) => e.stopPropagation()}
                     />
                   )}
                 </div>

@@ -58,6 +58,13 @@ export default function GameLobby() {
   const activePlayers = game?.players.filter(p => p.active) || [];
   const inactivePlayers = game?.players.filter(p => !p.active) || [];
 
+  // Calculate current multiplier
+  const currentMultiplier = game ? (
+    game.settings.mode === 'simple' ? 
+      game.settings.multiplier : 
+      (game.settings.multiplierSequence || [1])[(game.currentRound - 1) % (game.settings.multiplierSequence || [1]).length]
+  ) : 1;
+
   const togglePlayerActive = (playerId: string) => {
     if (!game) return;
 
@@ -287,13 +294,16 @@ export default function GameLobby() {
                 {activePlayers.length >= 3 && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Button 
-                      className="elegant-glow pointer-events-auto rounded-full w-32 h-32"
+                      className="elegant-glow pointer-events-auto rounded-full w-36 h-36"
                       onClick={startNextRound}
                     >
                       <div className="text-center">
                         <Play className="h-6 w-6 mx-auto mb-1" />
                         <div className="text-sm leading-tight">
                           Start Next<br />Round
+                        </div>
+                        <div className="text-xs mt-1 opacity-90">
+                          Multiplier: ×{currentMultiplier}
                         </div>
                       </div>
                     </Button>
