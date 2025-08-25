@@ -330,9 +330,9 @@ export default function GameLobby() {
                 
                 {/* Start Next Round Button in Center */}
                 {activePlayers.length >= 3 && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                     <Button 
-                      className="elegant-glow pointer-events-auto rounded-full w-36 h-36"
+                      className="elegant-glow pointer-events-auto rounded-full w-36 h-36 relative z-20"
                       onClick={startNextRound}
                     >
                       <div className="text-center">
