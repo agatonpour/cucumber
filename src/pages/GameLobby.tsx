@@ -303,11 +303,11 @@ export default function GameLobby() {
       <div className="flex h-[calc(100vh-80px)]">
         {/* Main Table Area */}
         <div className="flex-1 relative overflow-hidden">
-          {/* Felt Table Background */}
+          {/* Casino Table with Detailed Graphics */}
           <div className="absolute inset-0 bg-gradient-to-br from-felt-green to-felt-green/80">
             
-            {/* Table Border */}
-            <div className="absolute inset-8 rounded-full border-4 border-gold/30 shadow-inner">
+            {/* Enhanced Table with Graphics */}
+            <div className="absolute inset-8 game-table-container">
               {/* Players positioned around the table */}
               <div className="relative w-full h-full">
                 {activePlayers.map((player, index) => (

@@ -61,16 +61,16 @@ export default function Home() {
   return (
     <div className="min-h-screen casino-gradient">
       {/* Header */}
-      <header className="border-b border-border/20 bg-card/10 backdrop-blur-sm">
+      <header className="border-b border-border/20 bg-card/10 backdrop-blur-sm roman-columns">
         <div className="container mx-auto px-6 py-8">
           <div className="text-center">
             <div className="flex flex-col items-center mb-6">
               <img 
                 src={cucumberLogo} 
                 alt="Cucumber" 
-                className="h-32 w-32 rounded-lg mb-4"
+                className="h-40 w-40 rounded-lg mb-4 elegant-glow"
               />
-              <h1 className="text-4xl font-bold gold-accent">Cucumber</h1>
+              <h1 className="text-5xl font-bold gold-accent">Cucumber</h1>
             </div>
             
             <Button 
