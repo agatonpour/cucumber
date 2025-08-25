@@ -49,10 +49,10 @@ export default function NewGame() {
     const updated = [...players];
     const activePlayers = updated.filter(p => p.active).length;
     
-    if (!updated[index].active && activePlayers >= 4) {
+    if (!updated[index].active && activePlayers >= 6) {
       toast({
         title: "Maximum Active Players",
-        description: "Only 4 players can be active for a round.",
+        description: "Only 6 players can be active for a round.",
         variant: "destructive"
       });
       return;
@@ -233,11 +233,10 @@ export default function NewGame() {
                   ))}
                 </div>
                 
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
                   <Users className="h-4 w-4" />
                   <span>
-                    {players.filter(p => p.active).length} active players 
-                    (3-4 required for rounds)
+                    {players.filter(p => p.active).length} active players
                   </span>
                 </div>
               </div>

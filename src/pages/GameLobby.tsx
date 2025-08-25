@@ -77,10 +77,10 @@ export default function GameLobby() {
 
     const currentActivePlayers = updated.players.filter(p => p.active);
     
-    if (!player.active && currentActivePlayers.length >= 4) {
+    if (!player.active && currentActivePlayers.length >= 6) {
       toast({
         title: "Maximum Active Players",
-        description: "Only 4 players can be active for a round.",
+        description: "Only 6 players can be active for a round.",
         variant: "destructive",
         duration: 4000
       });
@@ -423,11 +423,11 @@ export default function GameLobby() {
                         <div className="text-sm text-muted-foreground">
                           Tokens: {player.tally}
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-gold/20 text-gold">
+                        <Badge variant="secondary" className="bg-gold/20 text-gold text-xs mt-1">
                           Sitting Out
                         </Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
