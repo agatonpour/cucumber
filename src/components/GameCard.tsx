@@ -1,7 +1,7 @@
 import { SavedGame } from "@/lib/gameStorage";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Users, Calendar, Trophy } from "lucide-react";
+import { Play, Users, Calendar, Trophy, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface GameCardProps {
@@ -62,17 +62,30 @@ export function GameCard({ game, onResume, onDelete }: GameCardProps) {
           )}
         </div>
         
-        <Button
-          size="sm"
-          className="elegant-glow"
-          onClick={(e) => {
-            e.stopPropagation();
-            onResume(game.id);
-          }}
-        >
-          <Play className="h-4 w-4 mr-1" />
-          Resume
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(game.id);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            className="elegant-glow"
+            onClick={(e) => {
+              e.stopPropagation();
+              onResume(game.id);
+            }}
+          >
+            <Play className="h-4 w-4 mr-1" />
+            Resume
+          </Button>
+        </div>
       </div>
     </Card>
   );
