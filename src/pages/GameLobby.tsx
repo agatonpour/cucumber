@@ -25,6 +25,7 @@ import cucumberLogo from "@/assets/cucumber-logo.png";
 import RoundResultModal, { RoundResult } from "@/components/RoundResultModal";
 import PlayerNameDialog from "@/components/PlayerNameDialog";
 import MultiplierSettings from "@/components/MultiplierSettings";
+import ScoreEditDialog from "@/components/ScoreEditDialog";
 
 export default function GameLobby() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -36,6 +37,8 @@ export default function GameLobby() {
   const [playerNameDialogOpen, setPlayerNameDialogOpen] = useState(false);
   const [multiplierSettingsOpen, setMultiplierSettingsOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [scoreEditDialogOpen, setScoreEditDialogOpen] = useState(false);
+  const [editingScore, setEditingScore] = useState<Player | null>(null);
 
   useEffect(() => {
     if (!gameId) {
@@ -159,6 +162,29 @@ export default function GameLobby() {
   const editPlayer = (player: Player) => {
     setEditingPlayer(player);
     setPlayerNameDialogOpen(true);
+  };
+
+  const editScore = (player: Player) => {
+    setEditingScore(player);
+    setScoreEditDialogOpen(true);
+  };
+
+  const handleScoreSave = (playerId: string, newScore: number) => {
+    if (!game) return;
+
+    const updated = { ...game };
+    const player = updated.players.find(p => p.id === playerId);
+    if (player) {
+      player.tally = newScore;
+      setGame(updated);
+      saveGame(updated);
+      
+      toast({
+        title: "Score Updated",
+        description: `${player.name}'s score updated to ${game.settings.currency === 'usd' ? '$' + newScore.toFixed(2) : newScore + ' tokens'}.`,
+        duration: 4000
+      });
+    }
   };
 
   const startNextRound = () => {
@@ -320,8 +346,11 @@ export default function GameLobby() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="font-medium text-sm">{player.name}</span>
                         </div>
-                        <div className="text-2xl font-bold gold-accent">
-                          {player.tally}
+                        <div 
+                          className="text-2xl font-bold gold-accent cursor-pointer hover:opacity-75 transition-opacity"
+                          onClick={() => editScore(player)}
+                        >
+                          {game.settings.currency === 'usd' ? '$' + player.tally.toFixed(2) : player.tally}
                         </div>
                       </div>
                     </Card>
@@ -341,7 +370,7 @@ export default function GameLobby() {
                           Start Next<br />Round
                         </div>
                         <div className="text-xs mt-1 opacity-90">
-                          Multiplier: ×{currentMultiplier}
+                          {game.settings.currency === 'usd' ? 'Divider' : 'Multiplier'}: {game.settings.currency === 'usd' ? '÷' : '×'}{currentMultiplier}
                         </div>
                       </div>
                     </Button>
@@ -363,8 +392,11 @@ export default function GameLobby() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="font-medium">{player.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Tokens: {player.tally}
+                      <div 
+                        className="text-sm text-muted-foreground cursor-pointer hover:opacity-75"
+                        onClick={() => editScore(player)}
+                      >
+                        {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + player.tally}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -420,8 +452,11 @@ export default function GameLobby() {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="font-medium">{player.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          Tokens: {player.tally}
+                        <div 
+                          className="text-sm text-muted-foreground cursor-pointer hover:opacity-75"
+                          onClick={() => editScore(player)}
+                        >
+                          {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + player.tally}
                         </div>
                         <Badge variant="secondary" className="bg-gold/20 text-gold text-xs mt-1">
                           Sitting Out
@@ -502,16 +537,6 @@ export default function GameLobby() {
         </div>
       </div>
 
-      {/* Round Result Modal */}
-      {game && (
-        <RoundResultModal
-          game={game}
-          open={roundModalOpen}
-          onOpenChange={setRoundModalOpen}
-          onSubmit={handleRoundResult}
-        />
-      )}
-
       {/* Player Name Dialog */}
       <PlayerNameDialog
         open={playerNameDialogOpen}
@@ -531,6 +556,31 @@ export default function GameLobby() {
           onOpenChange={setMultiplierSettingsOpen}
           currentSettings={game.settings}
           onSave={handleMultiplierSettings}
+          currency={game.settings.currency}
+        />
+      )}
+
+      {/* Round Result Modal */}
+      {game && (
+        <RoundResultModal
+          game={game}
+          open={roundModalOpen}
+          onOpenChange={setRoundModalOpen}
+          onSubmit={handleRoundResult}
+        />
+      )}
+
+      {/* Score Edit Dialog */}
+      {game && (
+        <ScoreEditDialog
+          player={editingScore}
+          open={scoreEditDialogOpen}
+          onOpenChange={(open) => {
+            setScoreEditDialogOpen(open);
+            if (!open) setEditingScore(null);
+          }}
+          onSave={handleScoreSave}
+          currency={game.settings.currency}
         />
       )}
     </div>

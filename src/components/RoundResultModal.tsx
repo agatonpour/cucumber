@@ -63,47 +63,54 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
     if (winners.length === 0 || losers.length === 0) return [];
 
     const result: { playerId: string; change: number }[] = [];
+    const isUSD = game.settings.currency === 'usd';
 
     if (winners.length === 1 && losers.length === 1) {
       // 1 vs 1
       const loser = losers[0];
-      const tokenChange = loser.exitValue * currentMultiplier;
+      const tokenChange = isUSD ? 
+        parseFloat((loser.exitValue / currentMultiplier).toFixed(2)) :
+        loser.exitValue * currentMultiplier;
       result.push({ playerId: winners[0], change: tokenChange });
       result.push({ playerId: loser.playerId, change: -tokenChange });
     } else if (winners.length === 1 && losers.length === 2) {
       // 1 vs 2
       let totalGain = 0;
       losers.forEach(loser => {
-        const tokenChange = loser.exitValue * currentMultiplier;
+        const tokenChange = isUSD ? 
+          parseFloat((loser.exitValue / currentMultiplier).toFixed(2)) :
+          loser.exitValue * currentMultiplier;
         totalGain += tokenChange;
         result.push({ playerId: loser.playerId, change: -tokenChange });
       });
-      result.push({ playerId: winners[0], change: totalGain });
+      result.push({ playerId: winners[0], change: isUSD ? parseFloat(totalGain.toFixed(2)) : totalGain });
     } else if (winners.length === 2 && losers.length === 2) {
       // 2 vs 2 - pair off one-to-one
       losers.forEach((loser, index) => {
         const winnerId = winners[index] || winners[0];
-        const tokenChange = loser.exitValue * currentMultiplier;
+        const tokenChange = isUSD ? 
+          parseFloat((loser.exitValue / currentMultiplier).toFixed(2)) :
+          loser.exitValue * currentMultiplier;
         result.push({ playerId: winnerId, change: tokenChange });
         result.push({ playerId: loser.playerId, change: -tokenChange });
       });
     } else {
-      // Other cases - split proportionally among winners
-      const totalLoss = losers.reduce((sum, loser) => sum + (loser.exitValue * currentMultiplier), 0);
-      const perWinner = Math.floor(totalLoss / winners.length);
-      
+      // Multiple winners - each winner gets full exit value from each loser
       losers.forEach(loser => {
-        const tokenChange = loser.exitValue * currentMultiplier;
-        result.push({ playerId: loser.playerId, change: -tokenChange });
-      });
-      
-      winners.forEach(winnerId => {
-        result.push({ playerId: winnerId, change: perWinner });
+        const tokenChange = isUSD ? 
+          parseFloat((loser.exitValue / currentMultiplier).toFixed(2)) :
+          loser.exitValue * currentMultiplier;
+        const totalLoss = tokenChange * winners.length;
+        result.push({ playerId: loser.playerId, change: -totalLoss });
+        
+        winners.forEach(winnerId => {
+          result.push({ playerId: winnerId, change: tokenChange });
+        });
       });
     }
 
     return result;
-  }, [selectedWinners, selectedLosers, exitValues, currentMultiplier]);
+  }, [selectedWinners, selectedLosers, exitValues, currentMultiplier, game.settings.currency]);
 
   const toggleWinner = (playerId: string) => {
     const newWinners = new Set(selectedWinners);
@@ -144,11 +151,15 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
   };
 
   const setExitValue = (playerId: string, value: number) => {
-    setExitValues(prev => ({ ...prev, [playerId]: Math.max(0, value) }));
+    const minValue = game.settings.currency === 'usd' ? 0.01 : 1;
+    setExitValues(prev => ({ ...prev, [playerId]: Math.max(minValue, value) }));
   };
 
   const canSubmit = selectedWinners.size > 0 && selectedLosers.size > 0 && 
-    Array.from(selectedLosers).every(id => exitValues[id] > 0);
+    Array.from(selectedLosers).every(id => {
+      const value = exitValues[id];
+      return game.settings.currency === 'usd' ? value >= 0.01 : value > 0;
+    });
 
   const handleSubmit = () => {
     if (!canSubmit) return;
@@ -186,15 +197,17 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-gold" />
-                <span className="font-medium">Current Multiplier</span>
+                <span className="font-medium">
+                  {game.settings.currency === 'usd' ? 'Current Divider' : 'Current Multiplier'}
+                </span>
               </div>
               <Badge variant="default" className="bg-gold text-rich-black text-lg px-3 py-1">
-                ×{currentMultiplier}
+                {game.settings.currency === 'usd' ? '÷' : '×'}{currentMultiplier}
               </Badge>
             </div>
             {game.settings.mode === 'advanced' && (
               <p className="text-sm text-muted-foreground mt-2">
-                Next round: ×{nextMultiplier}
+                Next round: {game.settings.currency === 'usd' ? '÷' : '×'}{nextMultiplier}
               </p>
             )}
           </Card>
@@ -252,10 +265,16 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                         }
                       }}
                       type="number"
-                      min="1"
+                      min={game.settings.currency === 'usd' ? "0.01" : "1"}
+                      step={game.settings.currency === 'usd' ? "0.01" : "1"}
                       placeholder="Exit"
                       value={exitValues[player.id] || ''}
-                      onChange={(e) => setExitValue(player.id, parseInt(e.target.value) || 0)}
+                      onChange={(e) => {
+                        const value = game.settings.currency === 'usd' ? 
+                          parseFloat(e.target.value) || 0 :
+                          parseInt(e.target.value) || 0;
+                        setExitValue(player.id, value);
+                      }}
                       className="w-20 text-center ml-2"
                       onClick={(e) => e.stopPropagation()}
                     />
@@ -282,7 +301,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                           variant={isPositive ? "default" : "destructive"}
                           className={isPositive ? "bg-gold text-rich-black" : ""}
                         >
-                          {isPositive ? '+' : ''}{adj.change} tokens
+                          {isPositive ? '+' : ''}{game.settings.currency === 'usd' ? adj.change.toFixed(2) : adj.change} {game.settings.currency === 'usd' ? '$' : 'tokens'}
                         </Badge>
                       </div>
                     );

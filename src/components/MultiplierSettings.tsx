@@ -20,9 +20,16 @@ interface MultiplierSettingsProps {
     multiplier: number;
     multiplierSequence?: number[];
   }) => void;
+  currency: 'sek' | 'usd';
 }
 
-export default function MultiplierSettings({ open, onOpenChange, currentSettings, onSave }: MultiplierSettingsProps) {
+export default function MultiplierSettings({ 
+  open, 
+  onOpenChange, 
+  currentSettings, 
+  onSave,
+  currency 
+}: MultiplierSettingsProps) {
   const [mode, setMode] = useState<'simple' | 'advanced'>(currentSettings.mode);
   const [simpleMultiplier, setSimpleMultiplier] = useState(currentSettings.multiplier);
   const [sequence, setSequence] = useState<number[]>(currentSettings.multiplierSequence || [2, 5]);
@@ -56,7 +63,7 @@ export default function MultiplierSettings({ open, onOpenChange, currentSettings
         <DialogHeader>
           <DialogTitle className="gold-accent flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Multiplier Settings
+            {currency === 'usd' ? 'Divider Settings' : 'Multiplier Settings'}
           </DialogTitle>
         </DialogHeader>
         
@@ -70,7 +77,9 @@ export default function MultiplierSettings({ open, onOpenChange, currentSettings
               
               {mode === 'simple' && (
                 <div className="ml-6 space-y-2">
-                  <Label htmlFor="simple-multiplier" className="text-sm">Fixed Multiplier</Label>
+                  <Label htmlFor="simple-multiplier" className="text-sm">
+                    {currency === 'usd' ? 'Fixed Divider' : 'Fixed Multiplier'}
+                  </Label>
                   <Input
                     id="simple-multiplier"
                     type="number"
@@ -90,11 +99,13 @@ export default function MultiplierSettings({ open, onOpenChange, currentSettings
               {mode === 'advanced' && (
                 <div className="ml-6 space-y-4">
                   <div>
-                    <Label className="text-sm">Multiplier Sequence</Label>
+                    <Label className="text-sm">
+                      {currency === 'usd' ? 'Divider Sequence' : 'Multiplier Sequence'}
+                    </Label>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {sequence.map((value, index) => (
                         <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                          ×{value}
+                          {currency === 'usd' ? '÷' : '×'}{value}
                           <button
                             type="button"
                             onClick={() => removeFromSequence(index)}

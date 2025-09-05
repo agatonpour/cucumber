@@ -26,6 +26,7 @@ export default function NewGame() {
   const [simpleMultiplier, setSimpleMultiplier] = useState(1);
   const [advancedSequence, setAdvancedSequence] = useState("2,5,2,5");
   const [gameMode, setGameMode] = useState<"social" | "arena">("social");
+  const [currency, setCurrency] = useState<"sek" | "usd">("sek");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -123,6 +124,7 @@ export default function NewGame() {
 
     // Set multiplier settings
     newGame.settings.gameMode = gameMode;
+    newGame.settings.currency = currency;
     if (multiplierMode === "simple") {
       newGame.settings.multiplier = simpleMultiplier;
       newGame.settings.mode = 'simple';
@@ -241,9 +243,22 @@ export default function NewGame() {
                 </div>
               </div>
 
+              {/* Currency Selection */}
+              <div className="space-y-4">
+                <Label className="text-lg font-medium text-center block">Currency</Label>
+                <Tabs value={currency} onValueChange={(v) => setCurrency(v as "sek" | "usd")}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="sek">Swedish Crowns</TabsTrigger>
+                    <TabsTrigger value="usd">US Dollars</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+
               {/* Multiplier Setup */}
               <div className="space-y-4">
-                <Label className="text-lg font-medium text-center block">Token Multiplier</Label>
+                <Label className="text-lg font-medium text-center block">
+                  {currency === 'usd' ? 'Exit Score Divider' : 'Token Multiplier'}
+                </Label>
                 <Tabs value={multiplierMode} onValueChange={(v) => setMultiplierMode(v as "simple" | "advanced")}>
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="simple">Simple</TabsTrigger>
@@ -262,7 +277,7 @@ export default function NewGame() {
                       />
                     </div>
                     <p className="text-sm text-muted-foreground text-center">
-                      Fixed multiplier for all rounds
+                      {currency === 'usd' ? 'Fixed divider for all rounds' : 'Fixed multiplier for all rounds'}
                     </p>
                   </TabsContent>
                   

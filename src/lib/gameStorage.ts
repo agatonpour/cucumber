@@ -14,6 +14,7 @@ export interface GameSettings {
   mode: 'simple' | 'advanced';
   multiplier: number;
   multiplierSequence?: number[];
+  currency: 'sek' | 'usd';
 }
 
 export interface RoundRecord {
@@ -148,7 +149,8 @@ export const createNewGame = (name: string, players: string[]): SavedGame => {
     settings: {
       gameMode: 'social',
       mode: 'simple',
-      multiplier: 1
+      multiplier: 1,
+      currency: 'sek'
     },
     players: players.map((playerName, index) => ({
       id: `player_${index}_${Date.now()}`,
