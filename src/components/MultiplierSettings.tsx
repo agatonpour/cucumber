@@ -84,8 +84,15 @@ export default function MultiplierSettings({
                     id="simple-multiplier"
                     type="number"
                     min="1"
-                    value={simpleMultiplier}
-                    onChange={(e) => setSimpleMultiplier(parseInt(e.target.value) || 1)}
+                    value={simpleMultiplier || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '') {
+                        setSimpleMultiplier(0);
+                      } else {
+                        setSimpleMultiplier(parseInt(value) || 0);
+                      }
+                    }}
                     className="w-32"
                   />
                 </div>
@@ -155,6 +162,7 @@ export default function MultiplierSettings({
           <Button 
             className="elegant-glow"
             onClick={handleSave}
+            disabled={mode === 'simple' && (simpleMultiplier <= 0 || !simpleMultiplier)}
           >
             Save Settings
           </Button>

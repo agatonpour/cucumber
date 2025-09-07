@@ -25,9 +25,22 @@ export function EmptyState({ onNewGame }: EmptyStateProps) {
         />
       </div>
       
-      <h2 className="text-2xl font-bold mb-8 gold-accent">
-        Lets play Cucumber
+      <h2 className="text-3xl font-bold mb-6 gold-accent">
+        Cucumber
       </h2>
+      
+      <Button 
+        size="lg" 
+        className="w-full elegant-glow mb-6"
+        onClick={handleNewGame}
+      >
+        <Plus className="h-5 w-5 mr-2" />
+        New Game
+      </Button>
+      
+      <p className="text-lg text-muted-foreground">
+        The #1 game of all time
+      </p>
     </Card>
   );
 }

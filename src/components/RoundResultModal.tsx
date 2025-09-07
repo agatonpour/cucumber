@@ -184,41 +184,36 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="gold-accent text-center">
             Round {game.currentRound} Results
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Multiplier Info */}
-          <Card className="felt-card p-4">
+          <Card className="felt-card p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-gold" />
-                <span className="font-medium">
+                <Calculator className="h-4 w-4 text-gold" />
+                <span className="text-sm font-medium">
                   {game.settings.currency === 'usd' ? 'Current Divider' : 'Current Multiplier'}
                 </span>
               </div>
-              <Badge variant="default" className="bg-gold text-rich-black text-lg px-3 py-1">
+              <Badge variant="default" className="bg-gold text-rich-black px-2 py-1">
                 {game.settings.currency === 'usd' ? '÷' : '×'}{currentMultiplier}
               </Badge>
             </div>
-            {game.settings.mode === 'advanced' && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Next round: {game.settings.currency === 'usd' ? '÷' : '×'}{nextMultiplier}
-              </p>
-            )}
           </Card>
 
           {/* Winner Selection */}
           <div>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Trophy className="h-5 w-5 text-gold" />
-              <Label className="text-base font-medium gold-accent">Winner</Label>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Trophy className="h-4 w-4 text-gold" />
+              <Label className="text-sm font-medium gold-accent">Winner</Label>
             </div>
-            <div className="space-y-2 max-w-xs mx-auto">
+            <div className="space-y-1 max-w-xs mx-auto">
               {activePlayers.map(player => (
                 <div key={player.id} className="flex items-center space-x-2">
                   <Checkbox
@@ -227,7 +222,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                     onCheckedChange={() => toggleWinner(player.id)}
                     disabled={selectedLosers.has(player.id)}
                   />
-                  <Label htmlFor={`winner-${player.id}`} className="flex-1 cursor-pointer">
+                  <Label htmlFor={`winner-${player.id}`} className="flex-1 cursor-pointer text-sm">
                     {player.name}
                   </Label>
                 </div>
@@ -237,11 +232,11 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
 
           {/* Loser Selection */}
           <div>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Target className="h-5 w-5 text-destructive" />
-              <Label className="text-base font-medium gold-accent">Loser & Exit Values</Label>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Target className="h-4 w-4 text-destructive" />
+              <Label className="text-sm font-medium gold-accent">Loser & Exit Values</Label>
             </div>
-            <div className="space-y-2 max-w-sm mx-auto">
+            <div className="space-y-1 max-w-sm mx-auto">
               {activePlayers.map(player => (
                 <div 
                   key={player.id} 
@@ -254,7 +249,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                     onCheckedChange={() => toggleLoser(player.id)}
                     disabled={selectedWinners.has(player.id)}
                   />
-                  <Label htmlFor={`loser-${player.id}`} className="cursor-pointer flex-1">
+                  <Label htmlFor={`loser-${player.id}`} className="cursor-pointer flex-1 text-sm">
                     {player.name}
                   </Label>
                   {selectedLosers.has(player.id) && (
@@ -275,7 +270,7 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
                           parseInt(e.target.value) || 0;
                         setExitValue(player.id, value);
                       }}
-                      className="w-20 text-center ml-2"
+                      className="w-16 text-center text-xs"
                       onClick={(e) => e.stopPropagation()}
                     />
                   )}
@@ -289,17 +284,17 @@ export default function RoundResultModal({ game, open, onOpenChange, onSubmit }:
             <>
               <Separator />
               <div>
-                <Label className="text-base font-medium gold-accent mb-3 block text-center">Token Adjustments Preview</Label>
-                <div className="space-y-1">
+                <Label className="text-sm font-medium gold-accent mb-2 block text-center">Preview</Label>
+                <div className="space-y-1 max-h-24 overflow-y-auto">
                   {adjustments.map(adj => {
                     const player = activePlayers.find(p => p.id === adj.playerId);
                     const isPositive = adj.change > 0;
                     return (
                       <div key={adj.playerId} className="flex justify-between items-center py-1">
-                        <span>{player?.name}</span>
+                        <span className="text-sm">{player?.name}</span>
                         <Badge 
                           variant={isPositive ? "default" : "destructive"}
-                          className={isPositive ? "bg-gold text-rich-black" : ""}
+                          className={`text-xs ${isPositive ? "bg-gold text-rich-black" : ""}`}
                         >
                           {isPositive ? '+' : ''}{game.settings.currency === 'usd' ? adj.change.toFixed(2) : adj.change} {game.settings.currency === 'usd' ? '$' : 'tokens'}
                         </Badge>

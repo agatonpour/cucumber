@@ -350,7 +350,7 @@ export default function GameLobby() {
                           className="text-2xl font-bold gold-accent cursor-pointer hover:opacity-75 transition-opacity"
                           onClick={() => editScore(player)}
                         >
-                          {game.settings.currency === 'usd' ? '$' + player.tally.toFixed(2) : player.tally}
+                          {game.settings.currency === 'usd' ? '$' + player.tally.toFixed(2) : (player.tally === 0 ? '0' : player.tally)}
                         </div>
                       </div>
                     </Card>
@@ -396,7 +396,7 @@ export default function GameLobby() {
                         className="text-sm text-muted-foreground cursor-pointer hover:opacity-75"
                         onClick={() => editScore(player)}
                       >
-                        {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + player.tally}
+                        {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + (player.tally === 0 ? '0' : player.tally)}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -456,7 +456,7 @@ export default function GameLobby() {
                           className="text-sm text-muted-foreground cursor-pointer hover:opacity-75"
                           onClick={() => editScore(player)}
                         >
-                          {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + player.tally}
+                          {game.settings.currency === 'usd' ? 'Score: $' + player.tally.toFixed(2) : 'Tokens: ' + (player.tally === 0 ? '0' : player.tally)}
                         </div>
                         <Badge variant="secondary" className="bg-gold/20 text-gold text-xs mt-1">
                           Sitting Out

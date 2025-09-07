@@ -39,7 +39,7 @@ export function GameCard({ game, onResume, onDelete }: GameCardProps) {
           {topPlayer && (
             <div className="flex items-center gap-1 gold-accent text-sm">
               <Trophy className="h-4 w-4" />
-              <span>{topPlayer.name}: {topPlayer.tally}</span>
+              <span>{topPlayer.name}: {game.settings.currency === 'usd' ? topPlayer.tally.toFixed(2) : topPlayer.tally}</span>
             </div>
           )}
         </div>
@@ -52,7 +52,7 @@ export function GameCard({ game, onResume, onDelete }: GameCardProps) {
               key={player.id}
               className="px-2 py-1 rounded-full bg-secondary/20 text-secondary-foreground"
             >
-              {player.name}: {player.tally}
+              {player.name}: {game.settings.currency === 'usd' ? player.tally.toFixed(2) : player.tally}
             </span>
           ))}
           {activePlayers.length > 3 && (
