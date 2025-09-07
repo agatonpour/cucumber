@@ -268,7 +268,8 @@ export default function GameLobby() {
 
   const getPlayerPosition = (index: number, total: number) => {
     const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
-    const radius = 160;
+    // Responsive radius - smaller on mobile
+    const radius = window.innerWidth < 640 ? 120 : 160;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
     
@@ -277,8 +278,8 @@ export default function GameLobby() {
       position: 'absolute' as const,
       left: '50%',
       top: '50%',
-      marginLeft: '-60px',
-      marginTop: '-40px'
+      marginLeft: window.innerWidth < 640 ? '-50px' : '-60px',
+      marginTop: window.innerWidth < 640 ? '-32px' : '-40px'
     };
   };
 
@@ -296,8 +297,8 @@ export default function GameLobby() {
     <div className="min-h-screen casino-gradient">
       {/* Header */}
       <header className="border-b border-border/20 bg-card/10 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
@@ -308,7 +309,7 @@ export default function GameLobby() {
                 Home
               </Button>
               <div>
-                <h1 className="text-2xl font-bold gold-accent">{game.name}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold gold-accent">{game.name}</h1>
                 <p className="text-sm text-muted-foreground">
                   {game.currentRound} Rounds • {activePlayers.length} active players
                 </p>
@@ -317,6 +318,7 @@ export default function GameLobby() {
             
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => setMultiplierSettingsOpen(true)}
             >
               <Settings className="h-4 w-4 mr-2" />
@@ -326,14 +328,14 @@ export default function GameLobby() {
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-80px)]">
+      <div className="flex flex-col lg:flex-row lg:h-[calc(100vh-80px)]">
         {/* Main Table Area */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative overflow-hidden h-[50vh] lg:h-auto">
           {/* Casino Table with Detailed Graphics */}
           <div className="absolute inset-0 bg-gradient-to-br from-felt-green to-felt-green/80">
             
             {/* Enhanced Table with Graphics */}
-            <div className="absolute inset-8 game-table-container">
+            <div className="absolute inset-2 sm:inset-4 lg:inset-8 game-table-container">
               {/* Players positioned around the table */}
               <div className="relative w-full h-full">
                 {activePlayers.map((player, index) => (
@@ -341,13 +343,13 @@ export default function GameLobby() {
                     key={player.id}
                     style={getPlayerPosition(index, activePlayers.length)}
                   >
-                    <Card className="felt-card p-4 text-center min-w-[120px] bg-card/90 backdrop-blur-sm">
-                      <div className="space-y-2">
+                    <Card className="felt-card p-2 sm:p-4 text-center min-w-[100px] sm:min-w-[120px] bg-card/90 backdrop-blur-sm">
+                      <div className="space-y-1 sm:space-y-2">
                         <div className="flex items-center justify-center gap-1">
-                          <span className="font-medium text-sm">{player.name}</span>
+                          <span className="font-medium text-xs sm:text-sm">{player.name}</span>
                         </div>
                         <div 
-                          className="text-2xl font-bold gold-accent cursor-pointer hover:opacity-75 transition-opacity"
+                          className="text-lg sm:text-2xl font-bold gold-accent cursor-pointer hover:opacity-75 transition-opacity"
                           onClick={() => editScore(player)}
                         >
                           {game.settings.currency === 'usd' ? '$' + player.tally.toFixed(2) : (player.tally === 0 ? '0' : player.tally)}
@@ -361,12 +363,12 @@ export default function GameLobby() {
                 {activePlayers.length >= 3 && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                     <Button 
-                      className="elegant-glow pointer-events-auto rounded-full w-36 h-36 relative z-20"
+                      className="elegant-glow pointer-events-auto rounded-full w-24 h-24 sm:w-36 sm:h-36 relative z-20"
                       onClick={startNextRound}
                     >
                       <div className="text-center">
-                        <Play className="h-6 w-6 mx-auto mb-1" />
-                        <div className="text-sm leading-tight">
+                        <Play className="h-4 w-4 sm:h-6 sm:w-6 mx-auto mb-1" />
+                        <div className="text-xs sm:text-sm leading-tight">
                           Start Next<br />Round
                         </div>
                         <div className="text-xs mt-1 opacity-90">
@@ -382,7 +384,7 @@ export default function GameLobby() {
         </div>
 
         {/* Sidebar */}
-        <div className="w-80 border-l border-border/20 bg-card/10 backdrop-blur-sm p-6 space-y-6 overflow-y-auto">
+        <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-border/20 bg-card/10 backdrop-blur-sm p-4 lg:p-6 space-y-4 lg:space-y-6 overflow-y-auto max-h-[50vh] lg:max-h-none">
           {/* Active Players Management */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium gold-accent">Active Players</h3>

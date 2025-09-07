@@ -62,15 +62,15 @@ export default function Home() {
     <div className="min-h-screen casino-gradient">
       {/* Header */}
       <header className="border-b border-border/20 bg-card/10 backdrop-blur-sm roman-columns">
-        <div className="container mx-auto px-6 py-8">
+        <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="text-center">
-            <div className="flex flex-col items-center mb-6">
+            <div className="flex flex-col items-center mb-4 sm:mb-6">
               <img 
                 src={cucumberLogo} 
                 alt="Cucumber" 
-                className="h-40 w-40 rounded-lg mb-4 elegant-glow"
+                className="h-32 w-32 sm:h-40 sm:w-40 rounded-lg mb-4 elegant-glow"
               />
-              <h1 className="text-5xl font-bold gold-accent">Cucumber</h1>
+              <h1 className="text-4xl sm:text-5xl font-bold gold-accent">Cucumber</h1>
             </div>
             
             <Button 
@@ -105,7 +105,7 @@ export default function Home() {
             </div>
 
             {/* Games Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGames.map((game) => (
                 <GameCard
                   key={game.id}
